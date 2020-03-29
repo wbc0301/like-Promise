@@ -5,8 +5,8 @@ class Promise {
     this.value = undefined;  // 成功的值
     this.reason = undefined; // 失败的原因
 
-    this.onResolvedCallbacks = []; // 成功存放的数组
-    this.onRejectedCallbacks = []; // 失败存放的数组
+    this.onResolvedCallbacks = []; // 成功回调的数组
+    this.onRejectedCallbacks = []; // 失败回调的数组
 
     let resolve = (value) => {
       if (this.status === 'pending') { // 只有当前状态是pending的时候才可以改变状态，就是在这里决定的

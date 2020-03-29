@@ -10,19 +10,31 @@
 //1.实现基本的promise
 // console.log(Promise);
 let Promise = require('./Promise-01同步')
+// let Promise = require('./Promise-2')
 // console.log(Promise);
 let promise = new Promise((resolve, reject) => {
   console.log(1);
-  // resolve('买'); // 同步调用resolve函数
-  reject('不买'); // 同步调用reject函数
+  resolve('买'); // 同步调用resolve函数
+  // reject('不买'); // 同步调用reject函数
 });
 console.log(2);
 
+function asyncHandle(data) {
+  return new Promise((resolve, reject) => {
+    if(data === '买') {
+      resolve('多买点！')
+    }
+  });
+}
+
 promise.then((data) => {
   console.log('data==', data);
+  return asyncHandle(data);
 }, (err) => {
   console.log('err==', err);
-});
+}).then((data2) => {
+  console.log(data2);
+})
 console.log(3);
 
 // promise.then((data) => {
