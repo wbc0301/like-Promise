@@ -14,9 +14,12 @@ let Promise = require('./Promise-01同步')
 // console.log(Promise);
 let promise = new Promise((resolve, reject) => {
   console.log(1);
-  resolve('买'); // 同步调用resolve函数
-  // reject('不买'); // 同步调用reject函数
+  setTimeout(()=> {
+      resolve('买'); // 同步调用resolve函数
+      // reject('不买'); // 同步调用reject函数
+  },1000)
 });
+
 console.log(2);
 
 function asyncHandle(data) {

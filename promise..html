@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <script>
+    function MyPromise(fn) {
+      this.status = 'pending';
+
+      this.value = undefined;
+      this.reason = undefined;
+
+      this.resolveCallbacks = [];
+      this.rejectCallbacks = [];
+
+      let resolve = (value) => {
+        if (this.status === 'pending') {
+          this.status = 'fulfilled';
+          this.value = value;
+          this.resolveCallbacks.forEach(fn => fn());
+        }
+      }
+
+      let reject = (reason) => {
+        if (this.status === 'pending') {
+          this.status = 'rejected';
+          this.reason = reason;
+          this.rejectCallbacks.forEach(fn => fn());
+        }
+      }
+
+      fn(resolve, reject);
+
+      this.then = function (fn1, fn2) {
+        this.resolveCallbacks.push(() => {
+          fn1(this.value);
+        });
+        this.rejectCallbacks.push(() => {
+          fn2(this.reason);
+        });
+      }
+    }
+
+
+    let mypromise = new MyPromise(function (resolve, reject) {
+      setTimeout(() => {
+        // resolve('我是正确的数据');
+        reject('错误了！！！！！');
+      }, 3000)
+
+    })
+
+    mypromise.then(function (data) {
+      console.log(data);
+    }, function (err) {
+      console.log(err)
+    })
+
+  </script>
+</body>
+
+</html>
