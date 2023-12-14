@@ -7,6 +7,7 @@
 //  同一个promise可以多次then
 // Promise是一个类
 // new Promise时 会传递一个执行器
+
 //1.实现基本的promise
 // console.log(Promise);
 let Promise = require('./Promise-01同步')
@@ -31,11 +32,13 @@ function asyncHandle(data) {
 }
 
 promise.then((data) => {
-  console.log('data==', data);
-  return asyncHandle(data);
+  console.log('data=', data);
+  return data;
 }, (err) => {
   console.log('err==', err);
-}).then((data2) => {
+})
+
+.then((data2) => {
   console.log(data2);
 })
 console.log(3);

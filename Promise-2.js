@@ -36,7 +36,7 @@ class Promise {
             throw err
           }
     let promise2
-    promise2 = new Promise((resolve, reject) => {
+    promise2 = new Promise((resolve, reject) => { // 必须用箭头函数 以保证下边的this指向当前promise实例
       if (this.status === 'resolved') {
         setTimeout(() => {
           try {
@@ -130,12 +130,10 @@ function resolvePromise (promise2, x, resolve, reject) {
     return reject(new TypeError('循环引用'))
   }
   let called
-  if (x != null && (typeof x === 'object' || typeof x === 'function')) {
-    // 对象
+  if (x != null && (typeof x === 'object' || typeof x === 'function')) { // 对象|函数
     try {
       let then = x.then
-      if (typeof then === 'function') {
-        // 是promise
+      if (typeof then === 'function') { // 是promise
         then.call(
           x,
           y => {
@@ -149,8 +147,7 @@ function resolvePromise (promise2, x, resolve, reject) {
             reject(r)
           }
         )
-      } else {
-        // 1.普通对象   成功
+      } else { // 普通对象   成功
         resolve(x)
       }
     } catch (e) {
@@ -159,7 +156,7 @@ function resolvePromise (promise2, x, resolve, reject) {
       reject(e)
     }
   } else {
-    //  2.字符串，3.数字，4.undefined   成功
+    //  2.字符串，3.数字，4.undefined 5.null  6.数组      成功
     resolve(x)
   }
 }
