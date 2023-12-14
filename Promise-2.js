@@ -1,5 +1,5 @@
 class Promise {
-  constructor (executor) {
+  constructor(executor) {
     this.status = 'pending'
     this.value = undefined
     this.reason = undefined
@@ -26,15 +26,13 @@ class Promise {
     }
   }
 
-  then (onFufilled, onRejected) {
+  then(onFufilled, onRejected) {
     // 默认成功和失败不传的情况
     onFufilled = typeof onFufilled === 'function' ? onFufilled : value => value
-    onRejected =
-      typeof onRejected === 'function'
-        ? onRejected
-        : err => { throw err }
+    onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err }
     let promise2
-    promise2 = new Promise((resolve, reject) => { // 必须用箭头函数 以保证下边的this指向当前promise实例
+    promise2 = new Promise((resolve, reject) => {
+      // 必须用箭头函数 以保证下边的this指向当前promise实例
       if (this.status === 'resolved') {
         setTimeout(() => {
           try {
@@ -81,9 +79,38 @@ class Promise {
     return promise2
   }
 
-  catch (fn) {
+  catch(fn) {
     return this.then(null, fn)
   }
+
+  finally(fn) {
+    return this.then(fn, fn)
+  }
+
+}
+
+Promise.prototype.catch = function(fn) {
+  return this.then(null, fn)
+}
+
+Promise.prototype.finally = function(fn) {
+  return this.then(
+    value => {
+      fn()
+      return value
+    },
+    error => {
+      fn()
+      throw error
+    },
+  )
+}
+
+Promise.prototype.finally = function(fn) {
+  return this.then(
+    value => Promise.resolve(fn()).then(() => value),
+    error => Promise.resolve(fn()).then(() => {throw error}),
+  )
 }
 
 Promise.all = promises => {
@@ -123,15 +150,17 @@ Promise.reject = function (data) {
 }
 
 // 实现多套promise共用的情况
-function resolvePromise (promise2, x, resolve, reject) {
+function resolvePromise(promise2, x, resolve, reject) {
   if (promise2 === x) {
     return reject(new TypeError('循环引用'))
   }
   let called
-  if (x != null && (typeof x === 'object' || typeof x === 'function')) { // 对象|函数
+  if (x != null && (typeof x === 'object' || typeof x === 'function')) {
+    // 对象|函数
     try {
       let then = x.then
-      if (typeof then === 'function') { // 是promise
+      if (typeof then === 'function') {
+        // 是promise
         then.call(
           x,
           y => {
@@ -145,7 +174,8 @@ function resolvePromise (promise2, x, resolve, reject) {
             reject(r)
           }
         )
-      } else { // 普通对象   成功
+      } else {
+        // 普通对象   成功
         resolve(x)
       }
     } catch (e) {
