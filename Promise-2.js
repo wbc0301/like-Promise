@@ -32,9 +32,7 @@ class Promise {
     onRejected =
       typeof onRejected === 'function'
         ? onRejected
-        : err => {
-            throw err
-          }
+        : err => { throw err }
     let promise2
     promise2 = new Promise((resolve, reject) => { // 必须用箭头函数 以保证下边的this指向当前promise实例
       if (this.status === 'resolved') {
