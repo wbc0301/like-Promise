@@ -115,38 +115,50 @@ Promise.prototype.finally = function(fn) {
 
 Promise.all = promises => {
   return new Promise((resolve, reject) => {
-    let result = []
-    let index = 0
-    let processData = (key, y) => {
-      index++
-      result[key] = y
-      if (promises.length === index) {
-        resolve(result)
-      }
-    }
-    for (let i = 0; i < promises.length; i++) {
-      promises[i].then(y => {
-        processData(i, y)
+    let result = [] // 记录结果
+    let index = 0   // 记录成功的个数
+    for (let idx = 0; idx < promises.length; idx++) {
+      promises[idx].then(value => {
+        index++
+        result[idx] = value
+        if (promises.length === index) {
+          resolve(result)
+        }
       }, reject)
     }
   })
 }
-Promise.race = promises => {
+
+Promise.any = promises => {
   return new Promise((resolve, reject) => {
-    for (let i = 0; i < promises.length; i++) {
-      promises[i].then(resolve, reject)
+    let result = [] // 记录结果
+    let index = 0   // 记录失败的个数
+    for (let idx = 0; idx < promises.length; idx++) {
+      promises[idx].then(resolve, err => {
+        index++
+        result[idx] = err
+        if (promises.length === index) {
+          reject(new AggregateError(result))
+        }
+      })
     }
   })
 }
-Promise.resolve = function (data) {
+
+Promise.race = promises => {
   return new Promise((resolve, reject) => {
-    resolve(data)
+    for (let idx = 0; idx < promises.length; idx++) {
+      promises[idx].then(resolve, reject)
+    }
   })
 }
+
+Promise.resolve = function (data) {
+  return new Promise((resolve, reject) => ( resolve(data) ))
+}
+
 Promise.reject = function (data) {
-  return new Promise((resolve, reject) => {
-    reject(data)
-  })
+  return new Promise((resolve, reject) => ( reject(data) ))
 }
 
 // 实现多套promise共用的情况
